@@ -25,6 +25,7 @@ export default {
       hasValidationErrors: this.hasValidationErrors.bind(this),
       help: this.help,
       helpPosition: this.logicalHelpPosition,
+      errorPosition: this.logicalErrorPosition,
       id: this.id || this.defaultId,
       isValid: this.isValid,
       imageBehavior: this.imageBehavior,
@@ -61,6 +62,7 @@ export default {
   elementAttributes,
   logicalLabelPosition,
   logicalHelpPosition,
+  logicalErrorPosition,
   mergedUploadUrl,
   hasValue,
   visibleValidationErrors,
@@ -218,6 +220,7 @@ function classes () {
       hasErrors: this.hasVisibleErrors,
       hasValue: this.hasValue,
       helpPosition: this.logicalHelpPosition,
+      errorPosition: this.logicalErrorPosition,
       isValid: this.isValid,
       labelPosition: this.logicalLabelPosition,
       type: this.type,
@@ -248,6 +251,21 @@ function logicalLabelPosition () {
 function logicalHelpPosition () {
   if (this.helpPosition) {
     return this.helpPosition
+  }
+  switch (this.classification) {
+    case 'group':
+      return 'before'
+    default:
+      return 'after'
+  }
+}
+
+/**
+ * Determine the best location for the error based on type (before or after).
+ */
+function logicalErrorPosition () {
+  if (this.errorPosition) {
+    return this.errorPosition
   }
   switch (this.classification) {
     case 'group':

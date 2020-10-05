@@ -9,6 +9,19 @@
   >
     <div :class="context.classes.wrapper">
       <slot
+        v-if="context.errorPosition === 'before'"
+        name="errors"
+        v-bind="context"
+      >
+        <component
+          :is="context.slotComponents.errors"
+          v-if="!context.disableErrors"
+          :type="context.slotComponents.errors === 'FormulateErrors' ? 'input' : false"
+          :context="context"
+          v-bind="context.slotProps.errors"
+        />
+      </slot>
+      <slot
         v-if="context.labelPosition === 'before'"
         name="label"
         v-bind="context"
@@ -71,6 +84,7 @@
       />
     </slot>
     <slot
+      v-if="context.errorPosition === 'after'"
       name="errors"
       v-bind="context"
     >
@@ -190,6 +204,10 @@ export default {
       default: false
     },
     error: {
+      type: [String, Boolean],
+      default: false
+    },
+    errorPosition: {
       type: [String, Boolean],
       default: false
     },

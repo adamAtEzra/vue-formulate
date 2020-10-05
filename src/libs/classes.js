@@ -71,6 +71,9 @@ const classGenerator = (classKey, context) => {
 const classModifiers = (base, classKey, context) => {
   const modifiers = []
   switch (classKey) {
+    case 'error':
+      modifiers.push(`${base}--${context.errorPosition}`)
+      break
     case 'label':
       modifiers.push(`${base}--${context.labelPosition}`)
       break
