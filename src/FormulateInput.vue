@@ -6,6 +6,7 @@
     :data-is-showing-errors="hasVisibleErrors"
     :data-has-value="hasValue"
     :data-is-focused="isFocused"
+    :data-has-placeholder="!!$attrs.placeholder"
     :data-type="type"
   >
     <div :class="context.classes.wrapper">
