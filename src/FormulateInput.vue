@@ -5,6 +5,7 @@
     :data-has-errors="hasErrors"
     :data-is-showing-errors="hasVisibleErrors"
     :data-has-value="hasValue"
+    :data-is-focused="isFocused"
     :data-type="type"
   >
     <div :class="context.classes.wrapper">
@@ -54,6 +55,8 @@
           :context="context"
           v-bind="context.slotProps.component"
           v-on="listeners"
+          @blur="onBlur"
+          @focus="onFocus"
         >
           <slot v-bind="context" />
         </component>
@@ -285,6 +288,7 @@ export default {
       formShouldShowErrors: false,
       validationErrors: [],
       pendingValidation: Promise.resolve(),
+      isFocused: false,
       // These registries are used for injected messages registrants only (mostly internal).
       ruleRegistry: [],
       messageRegistry: {}
@@ -292,6 +296,14 @@ export default {
   },
   computed: {
     ...context,
+    listeners () {
+      return {
+        ...this.$listeners,
+        focus: event => this.$emit('focus', event.target.value),
+        blur: event => this.$emit('blur', event.target.value)
+
+      }
+    },
     classification () {
       const classification = this.$formulate.classify(this.type)
       return (classification === 'box' && this.options) ? 'group' : classification
@@ -548,6 +560,12 @@ export default {
         this.ruleRegistry.splice(ruleIndex, 1)
         delete this.messageRegistry[key]
       }
+    },
+    onBlur () {
+      this.isFocused = false
+    },
+    onFocus () {
+      this.isFocused = true
     }
   }
 }
