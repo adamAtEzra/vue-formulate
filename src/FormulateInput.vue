@@ -354,6 +354,9 @@ export default {
         this.$emit('error-visibility', val)
       },
       immediate: true
+    },
+    shouldRender (newValue) {
+      this.performValidation()
     }
   },
   created () {
@@ -491,6 +494,10 @@ export default {
       })
     },
     didValidate (messages) {
+      if (!this.shouldRender) {
+        messages = []
+      }
+
       const validationChanged = !shallowEqualObjects(messages, this.validationErrors)
       this.validationErrors = messages
       if (validationChanged) {
