@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="shouldRender"
     :class="context.classes.outer"
     :data-classification="classification"
     :data-has-errors="hasErrors"
@@ -124,6 +125,8 @@ export default {
     formulateDeregister: { default: undefined },
     getFormValues: { default: () => () => ({}) },
     validateDependents: { default: () => () => {} },
+    observeValues: { default: undefined },
+    removeValueObserver: { default: undefined },
     observeErrors: { default: undefined },
     removeErrorObserver: { default: undefined },
     isSubField: { default: () => () => false }
@@ -277,6 +280,10 @@ export default {
     keepModelData: {
       type: [Boolean],
       default: false
+    },
+    renderCondition: {
+      type: Function,
+      default: () => () => true
     }
   },
   data () {
@@ -290,6 +297,7 @@ export default {
       validationErrors: [],
       pendingValidation: Promise.resolve(),
       isFocused: false,
+      shouldRender: true,
       // These registries are used for injected messages registrants only (mostly internal).
       ruleRegistry: [],
       messageRegistry: {}
@@ -354,6 +362,9 @@ export default {
       this.formulateRegister(this.nameOrFallback, this)
     }
     this.applyDefaultValue()
+    if (typeof this.observeValues === 'function') {
+      this.observeValues({ callback: this.onValuesUpdated, type: 'form' })
+    }
     if (!this.disableErrors && typeof this.observeErrors === 'function') {
       this.observeErrors({ callback: this.setErrors, type: 'input', field: this.nameOrFallback })
     }
@@ -361,6 +372,9 @@ export default {
     this.performValidation()
   },
   beforeDestroy () {
+    if (typeof this.observeValues === 'function') {
+      this.removeValueObserver(this.onValuesUpdated)
+    }
     if (!this.disableErrors && typeof this.removeErrorObserver === 'function') {
       this.removeErrorObserver(this.setErrors)
     }
@@ -553,6 +567,9 @@ export default {
         this.ruleRegistry.splice(ruleIndex, 1)
         delete this.messageRegistry[key]
       }
+    },
+    onValuesUpdated (data) {
+      this.shouldRender = this.renderCondition(data)
     },
     onBlur () {
       this.isFocused = false

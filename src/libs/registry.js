@@ -212,12 +212,12 @@ export function useRegistryMethods (without = []) {
       }
     },
     setFieldValue (field, value) {
+      // To allow watching of the form proxy we should update the value using vue's setters
       if (value === undefined) {
         // undefined values should be removed from the form model
-        const { [field]: value, ...proxy } = this.proxy
-        this.proxy = proxy
+        this.$delete(this.proxy, field)
       } else {
-        Object.assign(this.proxy, { [field]: value })
+        this.$set(this.proxy, field, value)
       }
       this.$emit('input', Object.assign({}, this.proxy))
     },

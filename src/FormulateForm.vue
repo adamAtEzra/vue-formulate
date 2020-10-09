@@ -24,6 +24,8 @@ export default {
   provide () {
     return {
       ...useRegistryProviders(this),
+      observeValues: this.addValueObserver,
+      removeValueObserver: this.removeValueObserver,
       observeErrors: this.addErrorObserver,
       removeErrorObserver: this.removeErrorObserver,
       formulateFieldValidation: this.formulateFieldValidation
@@ -68,6 +70,7 @@ export default {
     return {
       ...useRegistry(this),
       formShouldShowErrors: false,
+      valueObservers: [],
       errorObservers: [],
       namedErrors: [],
       namedFieldErrors: {}
@@ -118,6 +121,12 @@ export default {
       },
       deep: true
     },
+    proxy: {
+      handler (values) {
+        this.valueObservers.forEach(o => o.callback(values))
+      },
+      deep: true
+    },
     mergedFormErrors (errors) {
       this.errorObservers
         .filter(o => o.type === 'form')
@@ -145,6 +154,15 @@ export default {
       // given an object of errors, apply them to this form
       this.namedErrors = formErrors
       this.namedFieldErrors = inputErrors
+    },
+    addValueObserver (observer) {
+      if (!this.valueObservers.find(obs => observer.callback === obs.callback)) {
+        this.valueObservers.push(observer)
+        observer.callback(this.proxy)
+      }
+    },
+    removeValueObserver (observer) {
+      this.valueObservers = this.valueObservers.filter(obs => obs.callback !== observer)
     },
     addErrorObserver (observer) {
       if (!this.errorObservers.find(obs => observer.callback === obs.callback)) {
