@@ -467,14 +467,14 @@ function blurHandler (event) {
   if (this.errorBehavior === 'blur') {
     this.behavioralErrorVisibility = true
   }
-  this.$emit('blur', event.target.value)
+  this.$emit('blur', event)
 }
 
 /**
  * Bound into the context object.
  */
 function focusHandler (event) {
-  this.$emit('focus', event.target.value)
+  this.$emit('focus', event)
 }
 
 /**
