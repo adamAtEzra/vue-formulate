@@ -65,6 +65,7 @@ export default {
         // The following are a list of items to pull out of the context object
         attributes: { id, ...groupApplicableAttributes },
         blurHandler,
+        focusHandler,
         classification,
         component,
         getValidationErrors,

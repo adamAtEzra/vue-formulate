@@ -13,6 +13,7 @@ export default {
       removeLabel: this.logicalRemoveLabel,
       attributes: this.elementAttributes,
       blurHandler: blurHandler.bind(this),
+      focusHandler: focusHandler.bind(this),
       classification: this.classification,
       component: this.component,
       disableErrors: this.disableErrors,
@@ -462,10 +463,18 @@ function slotProps () {
 /**
  * Bound into the context object.
  */
-function blurHandler () {
+function blurHandler (event) {
   if (this.errorBehavior === 'blur') {
     this.behavioralErrorVisibility = true
   }
+  this.$emit('blur', event.target.value)
+}
+
+/**
+ * Bound into the context object.
+ */
+function focusHandler (event) {
+  this.$emit('focus', event.target.value)
 }
 
 /**

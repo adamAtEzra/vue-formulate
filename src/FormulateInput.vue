@@ -297,14 +297,6 @@ export default {
   },
   computed: {
     ...context,
-    listeners () {
-      return {
-        ...this.$listeners,
-        focus: event => this.$emit('focus', event.target.value),
-        blur: event => this.$emit('blur', event.target.value)
-
-      }
-    },
     classification () {
       const classification = this.$formulate.classify(this.type)
       return (classification === 'box' && this.options) ? 'group' : classification
